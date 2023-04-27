@@ -144,6 +144,19 @@ Hgvsp::ToHgvsp(string &originSeq, string &newSeq, int cdsOffset1, int cdsOffset2
     }
 
     if (newAas.size() == 0) { // DELETION
+        string nextCodon;
+        while (cdsOffset1 < transcript.cds_length - 3 * originAas.size()) {
+            nextCodon = mrna.GetSeq(transcript.transcript_id, utrOffset + cdsOffset1 + 3 * originAas.size(),
+                                    utrOffset + cdsOffset1 + 3 * originAas.size() + 3);
+            string nextAa = translator.TranslateAa(nextCodon);
+            if (nextAa == originAas[0]) {
+                originAas.erase(originAas.begin());
+                originAas.push_back(nextAa);
+                cdsOffset1 += 3;
+            } else {
+                break;
+            }
+        }
         if (originAas.size() == 1) {
             return HgvspResult("p." + originAas[0] + to_string(cdsOffset1 / 3 + 1) + "del");
         }
@@ -151,12 +164,28 @@ Hgvsp::ToHgvsp(string &originSeq, string &newSeq, int cdsOffset1, int cdsOffset2
                            to_string(cdsOffset1 / 3 + originAas.size()) + "del");
     }
     if (originAas.size() == 0) { //INSERTION
+
+        string nextCodon;
+        while (cdsOffset1 < transcript.cds_length - 3 * newAas.size()) {
+            nextCodon = mrna.GetSeq(transcript.transcript_id, utrOffset + cdsOffset1 + 3 * newAas.size(),
+                                    utrOffset + cdsOffset1 + 3 * newAas.size() + 3);
+            string nextAa = translator.TranslateAa(nextCodon);
+            if (nextAa == newAas[0]) {
+                newAas.erase(newAas.begin());
+                newAas.push_back(nextAa);
+                cdsOffset1 += 3;
+            } else {
+                break;
+            }
+        }
+
         string beforeCodon = mrna.GetSeq(transcript.transcript_id, utrOffset + cdsOffset1 - 3,
                                          utrOffset + cdsOffset1);
         string beforeAa = translator.TranslateAa(beforeCodon);
         string afterCodon = mrna.GetSeq(transcript.transcript_id, utrOffset + cdsOffset1,
                                         utrOffset + cdsOffset1 + 3);
         string afterAa = translator.TranslateAa(afterCodon);
+
         if (newAas.size() == 1) { // only ins 1 aa
             if (newAas[0] == beforeAa) { // 1 aa dup
                 return HgvspResult("p." + beforeAa + to_string(cdsOffset1 / 3) + "dup");
