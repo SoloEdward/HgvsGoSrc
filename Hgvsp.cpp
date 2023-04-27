@@ -132,6 +132,11 @@ Hgvsp::ToHgvsp(string &originSeq, string &newSeq, int cdsOffset1, int cdsOffset2
 
 
     // SNV
+    if (originAas.size() == 1 and newAas.size() == 1 and originAas[0] == "Met" and newAas[0] != "MET" and
+        cdsOffset1 == 0) {
+        return HgvspResult("p.Met1?");
+    }
+
     if (originAas.size() == 1 and newAas.size() == 1 and originAas[0] != "Ter") { // SNV
         if (originAas[0] == newAas[0]) {
             return HgvspResult("p." + originAas[0] + to_string(cdsOffset1 / 3 + 1) + "=");
