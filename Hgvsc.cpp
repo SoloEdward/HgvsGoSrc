@@ -153,27 +153,36 @@ HgvscResult Hgvsc::AnnotateDelIns(Variant &v, Transcript &t) {
     int exonId2 = cdsPosResult2.exonId;
     int cdsPos2 = cdsPosResult2.cdsPos;
     if (t.isReverse) {
+        string refBases = SeqUtil::reverseComplement(v.ref);
         string altBases = SeqUtil::reverseComplement(v.alt);
+        string delinsString = "delins" + altBases;
+        if (refBases == SeqUtil::reverseComplement(altBases)) {
+            delinsString = "inv";
+        }
         if (cdsPosString1 == cdsPosString2) {
-            return HgvscResult("DELINS", "c." + cdsPosString2 + "delins" + altBases, exonId1,
+            return HgvscResult("DELINS", "c." + cdsPosString2 + delinsString, exonId1,
                                cdsPos2,
                                cdsPos1, altBases, cdsPosResult1.isOnIntron && cdsPosResult2.isOnIntron,
                                cdsPosResult1.isInsideTranscript && cdsPosResult2.isInsideTranscript,
                                cdsPosResult1.isInsideCds || cdsPosResult2.isInsideCds);
         }
         return HgvscResult("DELINS",
-                           "c." + cdsPosString2 + "_" + cdsPosString1 + "delins" + altBases,
+                           "c." + cdsPosString2 + "_" + cdsPosString1 + delinsString,
                            exonId1, cdsPos2, cdsPos1, altBases, cdsPosResult1.isOnIntron && cdsPosResult2.isOnIntron,
                            cdsPosResult1.isInsideTranscript && cdsPosResult2.isInsideTranscript,
                            cdsPosResult1.isInsideCds || cdsPosResult2.isInsideCds);
     }
+    string delinsString = "delins" + v.alt;
+    if (v.ref == SeqUtil::reverseComplement(v.alt)) {
+        delinsString = "inv";
+    }
     if (cdsPosString1 == cdsPosString2) {
-        return HgvscResult("DELINS", "c." + cdsPosString2 + "delins" + v.alt, exonId2, cdsPos1, cdsPos2, v.alt,
+        return HgvscResult("DELINS", "c." + cdsPosString2 + delinsString, exonId2, cdsPos1, cdsPos2, v.alt,
                            cdsPosResult1.isOnIntron && cdsPosResult2.isOnIntron,
                            cdsPosResult1.isInsideTranscript && cdsPosResult2.isInsideTranscript,
                            cdsPosResult1.isInsideCds || cdsPosResult2.isInsideCds);
     }
-    return HgvscResult("DELINS", "c." + cdsPosString1 + "_" + cdsPosString2 + "delins" + v.alt, exonId2, cdsPos1,
+    return HgvscResult("DELINS", "c." + cdsPosString1 + "_" + cdsPosString2 + delinsString, exonId2, cdsPos1,
                        cdsPos2, v.alt, cdsPosResult1.isOnIntron && cdsPosResult2.isOnIntron,
                        cdsPosResult1.isInsideTranscript && cdsPosResult2.isInsideTranscript,
                        cdsPosResult1.isInsideCds || cdsPosResult2.isInsideCds);
