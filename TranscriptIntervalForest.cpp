@@ -62,7 +62,12 @@ void TranscriptIntervalForest::parseTranscriptFile(string transcriptFile) {
             this->intervalForest[chrom] = tree;
         }
         auto &tree = this->intervalForest[chrom];
-        Interval<int, Transcript *> interval{transcriptStart, transcriptEnd - 1, t};
-        tree.insert(interval);
+        if (gene == "TERT") {
+            Interval<int, Transcript *> interval{transcriptStart, transcriptEnd - 1 + 500, t};
+            tree.insert(interval);
+        } else {
+            Interval<int, Transcript *> interval{transcriptStart, transcriptEnd - 1, t};
+            tree.insert(interval);
+        }
     }
 }

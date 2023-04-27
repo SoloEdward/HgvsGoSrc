@@ -281,19 +281,13 @@ tuple<string, int, int> Transcript::GetCdsPosStringOutsideTranscript(int targetP
         tuple<int, int> cdsPosAndExonId = this->GetCdsPosOnExon(this->transcript_end - 1);
         int cdsPos = get<0>(cdsPosAndExonId);
         int distance = targetPos - (this->transcript_end - 1);
-        if (isReverse) {
-            return make_tuple("-" + to_string(cdsPos + distance), cdsPos, -1);
-        }
-        return make_tuple("*" + to_string(cdsPos + distance), cdsPos, -1);
+        return make_tuple(this->FormatCdsString(cdsPos + distance), cdsPos, -1);
     }
     if (targetPos < this->transcript_start) {
         tuple<int, int> cdsPosAndExonId = this->GetCdsPosOnExon(this->transcript_start);
         int cdsPos = get<0>(cdsPosAndExonId);
         int distance = this->transcript_start - targetPos;
-        if (isReverse) {
-            return make_tuple("*" + to_string(cdsPos + distance), cdsPos, -1);
-        }
-        return make_tuple("-" + to_string(cdsPos + distance), cdsPos, -1);
+        return make_tuple(this->FormatCdsString(cdsPos + distance), cdsPos, -1);
     }
 }
 
