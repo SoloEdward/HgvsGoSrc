@@ -16,6 +16,10 @@ class Variant {
 public:
     Variant(string chrom, int pos, string ref, string alt);
 
+    static Variant LeftTrim(Variant v);
+
+    static Variant RightTrim(Variant v);
+
     static Variant Per5Align(Variant v, Genome &genome);
 
     static Variant Per3Align(Variant v, Genome &genome);

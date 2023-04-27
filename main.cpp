@@ -62,8 +62,10 @@ int main(int argc, char *argv[]) {
             string ref = value[ref_index];
             string alt = value[alt_index];
             Variant v{chrom, pos, ref, alt};
-            Variant vPer5 = Variant::Per5Align(v, genome);
-            Variant vPer3 = Variant::Per3Align(v, genome);
+            Variant v2 = Variant::LeftTrim(v);
+            Variant v3 = Variant::RightTrim(v2);
+            Variant vPer5 = Variant::Per5Align(v3, genome);
+            Variant vPer3 = Variant::Per3Align(v3, genome);
             auto transcriptPtrs = forest.GetTranscripts(v.chrom, v.begin, v.end);
             if (transcriptPtrs.empty()) {
                 outf << line << "\tNA\tNA\tNA\tNA\tNA\n";

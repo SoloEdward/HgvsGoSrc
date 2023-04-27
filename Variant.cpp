@@ -79,4 +79,26 @@ vector<Variant> Variant::CreateVariants(string chrom, int pos, string ref, strin
     variants.push_back(v2);
     variants.push_back(v3);
     return variants;
+}
+
+Variant Variant::LeftTrim(Variant v) {
+    string ref = v.ref;
+    string alt = v.alt;
+    int pos = v.pos;
+    while (ref.length() > 1 and alt.length() > 1 and ref[0] == alt[0]) {
+        ref = ref.substr(1);
+        alt = alt.substr(1);
+        pos = pos + 1;
+    }
+    return Variant(v.chrom, pos, ref, alt);
+}
+
+Variant Variant::RightTrim(Variant v) {
+    string ref = v.ref;
+    string alt = v.alt;
+    while (ref.length() > 1 and alt.length() > 1 and ref[ref.length() - 1] == alt[alt.length() - 1]) {
+        ref = ref.substr(0, ref.length() - 1);
+        alt = alt.substr(0, alt.length() - 1);
+    }
+    return Variant(v.chrom, v.pos, v.ref, v.alt);
 };
