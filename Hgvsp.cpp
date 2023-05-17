@@ -20,9 +20,7 @@ HgvspResult Hgvsp::AnnotateHgvsp(HgvscResult &hgvscResult, Transcript &transcrip
     }
     if (hgvscResult.type == "DUP") {
         std::regex regex1("c\\.[0-9]+_[0-9]+\\+[0-9]+dup");
-//        std::regex regex2("c\\.[0-9]+_[0-9]+\\*[0-9]+dup");
         bool matched = std::regex_match(hgvscResult.hgvsC, regex1);
-//        bool matched2 = std::regex_match(hgvscResult.hgvsC, regex2);
         if (matched) {
             return HgvspResult("NA");
         }
@@ -79,32 +77,21 @@ HgvspResult Hgvsp::AnnotateHgvsp(HgvscResult &hgvscResult, Transcript &transcrip
     int cdsOffset1 = floor((double) startCdsPos / 3) * 3;
     int cdsOffset2 = ceil((double) endCdsPos / 3) * 3;
 
-//    cout << "startCdsPos " << startCdsPos << endl;
-//    cout << "endCdsPos " << endCdsPos << endl;
-//    cout << "cdsOffset1 " << cdsOffset1 << endl;
-//    cout << "cdsOffset2 " << cdsOffset2 << endl;
-//    cout << altBases << endl;
-//    cout << mrna.GetSeq(transcript.transcript_id, utrOffset) << endl;
     string originSeq = mrna.GetSeq(transcript.transcript_id, utrOffset + cdsOffset1,
                                    utrOffset + cdsOffset2);
     string newSeq;
-//    cout << originSeq << endl;
 
     if (hgvscResult.type == "DUP") {
-//        string dupAltBase = originSeq.substr(startCdsPos - cdsOffset1, altBases.size());
         newSeq = originSeq.substr(0, endCdsPos - cdsOffset1) + altBases + originSeq.substr(endCdsPos - cdsOffset1);
     } else if (hgvscResult.type == "INS") {
         newSeq = originSeq.substr(0, startCdsPos - cdsOffset1) + altBases + originSeq.substr(startCdsPos - cdsOffset1);
     } else {
         newSeq = originSeq.substr(0, startCdsPos - cdsOffset1) + altBases + originSeq.substr(endCdsPos - cdsOffset1);
     }
-//    cout << newSeq << endl;
 
     if (hgvspType == "INFRAME") {
-//        cout << "INFRAME" << endl;
         return Hgvsp::ToHgvsp(originSeq, newSeq, cdsOffset1, cdsOffset2, transcript, mrna, translator, utrOffset);
     } else {
-//        cout << "FRAMESHIFT" << endl;
         return Hgvsp::ToFrameShift(originSeq, newSeq, cdsOffset1, cdsOffset2, transcript, mrna, translator, utrOffset);
     }
 }
@@ -285,7 +272,6 @@ Hgvsp::ToFrameShift(string &originSeq, string &newSeq, int cdsOffset1, int cdsOf
     for (int i = 0; i < newCdsSeq.size(); i += 3) {
         if (newCdsSeq.substr(i, 3).size() < 3) {
             break;
-//            return HgvspResult("p." + beforeAa + to_string(aaOffset + 1 + sameAaCount) + "fs");
         }
         newAa = translator.TranslateAa(newCdsSeq.substr(i, 3));
         if (newAa != "Ter") {

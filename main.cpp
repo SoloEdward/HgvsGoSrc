@@ -19,10 +19,6 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
 
-        // ./HgvsGo ~/Documents/human_genome/GRCh37_latest_rna.fna ~/Documents/human_genome/human.genome.fa
-        // ~/PycharmProjects/HgvsGo/data/refseq.select.hg19.parsed.txt
-        // ~/PycharmProjects/HgvsGo/clinvar.variants  test.outttt
-
         string mrnaFile = argv[1];
         string genomeFile = argv[2];
         string transcriptFile = argv[3];
@@ -58,7 +54,6 @@ int main(int argc, char *argv[]) {
             vector<string> value = Util::stringSplit(line, '\t');
             string chrom = value[chrom_index];
             int pos = stoi(value[pos_index]);
-//            if (pos != 114181301) { continue; }
             string ref = value[ref_index];
             string alt = value[alt_index];
             Variant v{chrom, pos, ref, alt};
@@ -71,16 +66,12 @@ int main(int argc, char *argv[]) {
                 outf << line << "\tNA\tNA\tNA\tNA\tNA\n";
             }
             for (auto t: transcriptPtrs) {
-//                cout << t->transcript_id << " " << t->gene << endl;
                 Variant toAnnotateVariant = v;
                 if (t->isReverse) {
                     toAnnotateVariant = vPer5;
                 } else {
                     toAnnotateVariant = vPer3;
                 }
-//                cout << v.chrom << ":" << v.pos << " " << v.ref << ">" << v.alt << endl;
-//                cout << toAnnotateVariant.chrom << ":" << toAnnotateVariant.pos << " " << toAnnotateVariant.ref << ">"
-//                     << toAnnotateVariant.alt << endl;
                 auto hgvsResult = Hgvs::AnnotateHgvs(toAnnotateVariant, (*t), genome, translator, mrna);
                 auto hgvscResult = get<0>(hgvsResult);
                 auto hgvspResult = get<1>(hgvsResult);
