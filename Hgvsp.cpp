@@ -158,7 +158,11 @@ Hgvsp::ToHgvsp(string &originSeq, string &newSeq, int cdsOffset1, int cdsOffset2
     if (originAas.size() == 0) { //INSERTION
 
         string nextCodon;
+        int mrnaLength = mrna.GetMrnaLength(transcript.transcript_id);
         while (cdsOffset1 < transcript.cds_length - 3 * newAas.size()) {
+            if (utrOffset + cdsOffset1 + 3 * newAas.size() + 3 > mrnaLength){
+                break;
+            }
             nextCodon = mrna.GetSeq(transcript.transcript_id, utrOffset + cdsOffset1 + 3 * newAas.size(),
                                     utrOffset + cdsOffset1 + 3 * newAas.size() + 3);
             string nextAa = translator.TranslateAa(nextCodon);

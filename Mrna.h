@@ -17,6 +17,7 @@ public:
 
     string GetSeq(string transcript_id, int begin, int end);
     string GetSeq(string transcript_id, int begin);
+    int GetMrnaLength(string transcript_id);
 
 private:
     string mrna_file;

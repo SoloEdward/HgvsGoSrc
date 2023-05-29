@@ -44,3 +44,8 @@ string Mrna::GetSeq(string transcript_id, int begin) {
     string &seq = this->transcript_id2seq[transcript_id];
     return seq.substr(begin);
 }
+
+int Mrna::GetMrnaLength(string transcript_id) {
+    string &seq = this->transcript_id2seq[transcript_id];
+    return seq.size();
+}
